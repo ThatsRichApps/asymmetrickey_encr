@@ -69,13 +69,46 @@ int main (int argc, char **argv) {
 	printf ("textfile: %s\n", plaintext_file);
 
 	// Read from the binary file into a buffer
+	char *keybuffer;
+	unsigned long kfileLen;
+
+	//Open the file
+	FILE *kfp = fopen(key_file,"r");
+	if(!kfp) {
+		perror ("Unable to read keyfile file");
+		return 0;
+	}
+
+	//Get file length
+	fseek(kfp, 0, SEEK_END);
+	kfileLen=ftell(kfp);
+	fseek(kfp, 0, SEEK_SET);
+
+	//Allocate memory
+	keybuffer=(char *)malloc(kfileLen+1);
+	if (!keybuffer) {
+		printf("Memory error!");
+		fclose(kfp);
+		return 0;
+	}
+
+	//Read file contents into buffer
+	fread(keybuffer, kfileLen, 1, kfp);
+	fclose(kfp);
+
+	keybuffer[kfileLen] = '\0';
+
+	printf ("Keys from file: |%s|\n", keybuffer);
+
+
+	// Read from the binary file into a buffer
 	char *buffer;
 	unsigned long fileLen;
 
 	//Open the file
-	FILE *fp = fopen(plaintext_file,"rb");
+	FILE *fp = fopen(plaintext_file,"r");
 	if(!fp) {
-		printf ("Unable to read file");
+		perror ("Unable to read plaintext file");
 		return 0;
 	}
 
